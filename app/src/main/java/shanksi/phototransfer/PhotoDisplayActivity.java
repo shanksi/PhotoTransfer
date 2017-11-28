@@ -17,21 +17,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class PhotoDisplayActivity extends AppCompatActivity {
-    final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
-    PhotoListDisplayAdapter adapter;
-    ArrayList<Uri> imageUris;
+    private final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 1;
+    private PhotoListDisplayAdapter adapter;
+    private ArrayList<Uri> imageUris;
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+            case MY_PERMISSIONS_REQUEST_READ_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -62,7 +61,7 @@ public class PhotoDisplayActivity extends AppCompatActivity {
 
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_CONTACTS)) {
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
@@ -70,8 +69,8 @@ public class PhotoDisplayActivity extends AppCompatActivity {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                        MY_PERMISSIONS_REQUEST_READ_STORAGE);
+                // MY_PERMISSIONS_REQUEST_READ_STORAGE is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
@@ -108,7 +107,7 @@ public class PhotoDisplayActivity extends AppCompatActivity {
         }
     }
 
-    void handleSendImage(Intent intent) {
+    private void handleSendImage(Intent intent) {
         Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageUri != null) {
             ArrayList<Uri> uris = new ArrayList<>();
@@ -117,12 +116,12 @@ public class PhotoDisplayActivity extends AppCompatActivity {
         }
     }
 
-    void handleSendMultipleImages(Intent intent) {
+    private void handleSendMultipleImages(Intent intent) {
         ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         handleImages(uris);
     }
 
-    void handleImages(ArrayList<Uri> uris) {
+    private void handleImages(ArrayList<Uri> uris) {
         imageUris = uris;
         if (imageUris != null) {
             ListView l = (ListView) findViewById(R.id.listView);

@@ -14,8 +14,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class FileInfoExtractor {
-    private Uri _uri;
-    private String _path;
+    private final Uri _uri;
+    private final String _path;
     private File _file;
     private Date _date;
     private static final String[] _filePathColumn = {MediaStore.MediaColumns.DATA};
@@ -45,6 +45,10 @@ public class FileInfoExtractor {
             e.printStackTrace();
         }
         cursor.close();
+    }
+
+    public Uri getUri() {
+        return _uri;
     }
 
     public String getPath() {

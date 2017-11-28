@@ -33,7 +33,6 @@ public class PhotoListDisplayAdapter extends ArrayAdapter<Uri> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
 
-        // Displaying a textview
         TextView textView = (TextView) rowView.findViewById(R.id.label);
         Uri fileUri = values.get(position);
         textView.setText(fileUri.getPath());

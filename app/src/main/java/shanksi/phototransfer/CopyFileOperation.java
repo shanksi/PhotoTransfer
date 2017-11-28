@@ -42,27 +42,6 @@ public class CopyFileOperation extends AsyncTask<Uri, Void, Uri> {
             Uri fileUri = params[0];
             FileInfoExtractor info = new FileInfoExtractor(fileUri, mContext);
 
-
-            // local source file and target smb file
-            //String[] filePathColumn = {MediaStore.MediaColumns.DATA};
-            //Cursor cursor = mContext.getContentResolver().query(fileUri, filePathColumn, null, null, null);
-            //cursor.moveToFirst();
-
-            //int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            //Date dt = new Date();
-            //File fileSource = new File(cursor.getString(columnIndex));
-            //ExifInterface exif = null;
-            //try {
-            //    exif = new ExifInterface(cursor.getString(columnIndex));
-            //    String dtString = exif.getAttribute(ExifInterface.TAG_DATETIME);
-            //    dt = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH).parse(dtString);
-            //} catch (ParseException e) {
-            //    e.printStackTrace();
-            //}
-            //cursor.close();
-
-            File fileSource = info.getFile();
-
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             String pathFormat = prefs.getString("path", "default");
             String newPath = new SimpleDateFormat(pathFormat, Locale.ENGLISH).format(info.getDate());
@@ -79,23 +58,19 @@ public class CopyFileOperation extends AsyncTask<Uri, Void, Uri> {
                 dir.mkdirs();
             }
 
+            File fileSource = info.getFile();
             String filePath = fullPath + fileSource.getName();
 
             SmbFile smbFileTarget = new SmbFile(filePath, mAuth);
             // input and output stream
-            FileInputStream fis = new FileInputStream(fileSource);
-            SmbFileOutputStream smbfos = new SmbFileOutputStream(smbFileTarget);
             // writing data
-            try {
+            try (FileInputStream fis = new FileInputStream(fileSource); SmbFileOutputStream smbfos = new SmbFileOutputStream(smbFileTarget)) {
                 // 16 kb
                 final byte[] b = new byte[16 * 1024];
                 int read = 0;
                 while ((read = fis.read(b, 0, b.length)) > 0) {
                     smbfos.write(b, 0, read);
                 }
-            } finally {
-                fis.close();
-                smbfos.close();
             }
             smbFileTarget.setLastModified(info.getDate().getTime());
             // fileSource.delete();
