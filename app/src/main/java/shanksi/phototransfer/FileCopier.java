@@ -17,7 +17,7 @@ public class FileCopier {
         this.mContext = context;
     }
 
-    protected ArrayList<Uri> CopyFiles(ArrayList<Uri> uriArrayList, String directoryTitle) {
+    protected ArrayList<FileInfoExtractor> CopyFiles(ArrayList<FileInfoExtractor> uriArrayList, String directoryTitle) {
         try {
             jcifs.Config.registerSmbURLHandler();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -31,8 +31,8 @@ public class FileCopier {
             for (int i = 0; i < uriArrayList.size(); ++i) {
 
                 try {
-                    Uri fileUri = uriArrayList.get(i);
-
+                    FileInfoExtractor fileUri = uriArrayList.get(i);
+                    fileUri.setStatus(FileInfoExtractor.FileStatus.COPYING);
                     new CopyFileOperation(mContext, auth, pathRoot, directoryTitle).execute(fileUri);
                 } catch (Exception e) {
                     // TODO Auto-generated catch block

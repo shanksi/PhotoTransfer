@@ -14,16 +14,36 @@ import java.util.Date;
 import java.util.Locale;
 
 public class FileInfoExtractor {
+    public enum FileStatus {
+        SELECTED,
+        COPYING,
+        COPIED,
+        ERROR;
+    }
+
+    private FileStatus _status;
     private final Uri _uri;
     private final String _path;
     private File _file;
     private Date _date;
     private static final String[] _filePathColumn = {MediaStore.MediaColumns.DATA};
 
-    public FileInfoExtractor(Uri fileUri, Context context) {
+    // add a private listener variable
+    private FileStatusListener mListener = null;
+
+    // provide a way for another class to set the listener
+    public void setMyClassListener(FileStatusListener listener) {
+        this.mListener = listener;
+    }
+
+    public FileInfoExtractor(Uri fileUri, FileStatusListener listener, Context context) {
         _uri = fileUri;
         _path = fileUri.getPath();
         extractFileInfo(fileUri, context);
+
+        _status = FileStatus.SELECTED;
+
+        mListener = listener;
     }
 
     private void extractFileInfo(Uri fileUri, Context context) {
@@ -39,12 +59,23 @@ public class FileInfoExtractor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        try {
-            _date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH).parse(dtString);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        if (dtString != null) {
+            try {
+                _date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH).parse(dtString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            dtString = "";
         }
         cursor.close();
+    }
+
+    public String getDisplayText() {
+        if (_file != null) {
+            return _file.getName();
+        }
+        return _path;
     }
 
     public Uri getUri() {
@@ -63,4 +94,19 @@ public class FileInfoExtractor {
         return _date;
     }
 
+    public FileStatus getStatus() {
+        return _status;
+    }
+
+    public void setStatus(FileStatus value) {
+        _status = value;
+        if (mListener != null)
+            mListener.onStatusChanged(this);
+
+    }
+
+    public interface FileStatusListener {
+        // add whatever methods you need here
+        public void onStatusChanged(FileInfoExtractor fileInfoExtractor);
+    }
 }

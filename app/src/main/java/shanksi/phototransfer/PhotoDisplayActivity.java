@@ -20,10 +20,12 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class PhotoDisplayActivity extends AppCompatActivity {
+public class PhotoDisplayActivity
+        extends AppCompatActivity
+        implements FileInfoExtractor.FileStatusListener {
     private final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 1;
     private PhotoListDisplayAdapter adapter;
-    private ArrayList<Uri> imageUris;
+    private ArrayList<FileInfoExtractor> imageUris;
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -122,12 +124,20 @@ public class PhotoDisplayActivity extends AppCompatActivity {
     }
 
     private void handleImages(ArrayList<Uri> uris) {
-        imageUris = uris;
-        if (imageUris != null) {
+        if (uris != null) {
+            imageUris = map(uris);
             ListView l = (ListView) findViewById(R.id.listView);
             adapter = new PhotoListDisplayAdapter(this, imageUris);
             l.setAdapter(adapter);
         }
+    }
+
+    private ArrayList<FileInfoExtractor> map(ArrayList<Uri> uriList) {
+        ArrayList<FileInfoExtractor> newList = new ArrayList<>();
+        for (Uri uri : uriList) {
+            newList.add(new FileInfoExtractor(uri, this, this));
+        }
+        return newList;
     }
 
     @Override
@@ -155,5 +165,10 @@ public class PhotoDisplayActivity extends AppCompatActivity {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
         return true;
+    }
+
+    @Override
+    public void onStatusChanged(FileInfoExtractor fileInfoExtractor) {
+        adapter.notifyDataSetChanged();
     }
 }

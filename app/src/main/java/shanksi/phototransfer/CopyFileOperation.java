@@ -2,7 +2,6 @@ package shanksi.phototransfer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -20,7 +19,7 @@ import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileOutputStream;
 
 
-public class CopyFileOperation extends AsyncTask<Uri, Void, Uri> {
+public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileInfoExtractor> {
     private final Context mContext;
     private final NtlmPasswordAuthentication mAuth;
     private final String mPathRoot;
@@ -35,12 +34,11 @@ public class CopyFileOperation extends AsyncTask<Uri, Void, Uri> {
     }
 
     @Override
-    protected Uri doInBackground(Uri... params) {
+    protected FileInfoExtractor doInBackground(FileInfoExtractor... params) {
         try {
             jcifs.Config.registerSmbURLHandler();
 
-            Uri fileUri = params[0];
-            FileInfoExtractor info = new FileInfoExtractor(fileUri, mContext);
+            FileInfoExtractor info = params[0];
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
             String pathFormat = prefs.getString("path", "default");
@@ -62,6 +60,8 @@ public class CopyFileOperation extends AsyncTask<Uri, Void, Uri> {
             String filePath = fullPath + fileSource.getName();
 
             SmbFile smbFileTarget = new SmbFile(filePath, mAuth);
+
+
             // input and output stream
             // writing data
             try (FileInputStream fis = new FileInputStream(fileSource); SmbFileOutputStream smbfos = new SmbFileOutputStream(smbFileTarget)) {
@@ -88,9 +88,10 @@ public class CopyFileOperation extends AsyncTask<Uri, Void, Uri> {
     }
 
     @Override
-    protected void onPostExecute(Uri uri) {
+    protected void onPostExecute(FileInfoExtractor uri) {
         // Update Ui here
         //
         //
+        uri.setStatus(FileInfoExtractor.FileStatus.COPIED);
     }
 }
