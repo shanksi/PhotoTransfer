@@ -20,16 +20,16 @@ import jcifs.smb.SmbFileOutputStream;
 
 
 public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileInfoExtractor> {
-    private final Context mContext;
     private final NtlmPasswordAuthentication mAuth;
     private final String mPathRoot;
+    private final String mPathFormat;
     private final String mDirectoryTitle;
 
-    public CopyFileOperation(Context context, NtlmPasswordAuthentication auth, String pathRoot, String directoryTitle) {
+    public CopyFileOperation(NtlmPasswordAuthentication auth, String pathRoot, String pathFormat, String directoryTitle) {
         super();
-        this.mContext = context;
         this.mAuth = auth;
         this.mPathRoot = pathRoot;
+        this.mPathFormat = pathFormat;
         this.mDirectoryTitle = directoryTitle;
     }
 
@@ -40,9 +40,7 @@ public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileIn
 
             FileInfoExtractor info = params[0];
 
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            String pathFormat = prefs.getString("path", "default");
-            String newPath = new SimpleDateFormat(pathFormat, Locale.ENGLISH).format(info.getDate());
+            String newPath = new SimpleDateFormat(mPathFormat, Locale.ENGLISH).format(info.getDate());
 
             String fullPath = "smb:" + mPathRoot + "/" + newPath;
             if (mDirectoryTitle.length() > 0) {
@@ -60,7 +58,6 @@ public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileIn
             String filePath = fullPath + fileSource.getName();
 
             SmbFile smbFileTarget = new SmbFile(filePath, mAuth);
-
 
             // input and output stream
             // writing data

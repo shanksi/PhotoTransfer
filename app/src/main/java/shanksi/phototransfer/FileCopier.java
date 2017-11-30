@@ -24,16 +24,17 @@ public class FileCopier {
 
             String user = prefs.getString("user_name", "");
             String pass = prefs.getString("password", "");
+            String pathRoot = prefs.getString("root", "default");
+            String pathFormat = prefs.getString("path", "default");
 
             NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("", user, pass);
-            String pathRoot = prefs.getString("root", "default");
 
             for (int i = 0; i < uriArrayList.size(); ++i) {
 
                 try {
                     FileInfoExtractor fileUri = uriArrayList.get(i);
                     fileUri.setStatus(FileInfoExtractor.FileStatus.COPYING);
-                    new CopyFileOperation(mContext, auth, pathRoot, directoryTitle).execute(fileUri);
+                    new CopyFileOperation(auth, pathRoot, pathFormat, directoryTitle).execute(fileUri);
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
