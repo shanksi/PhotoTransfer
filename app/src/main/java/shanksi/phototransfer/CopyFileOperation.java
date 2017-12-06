@@ -35,10 +35,10 @@ public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileIn
 
     @Override
     protected FileInfoExtractor doInBackground(FileInfoExtractor... params) {
+        FileInfoExtractor info = params[0];
+
         try {
             jcifs.Config.registerSmbURLHandler();
-
-            FileInfoExtractor info = params[0];
 
             String newPath = new SimpleDateFormat(mPathFormat, Locale.ENGLISH).format(info.getDate());
 
@@ -73,13 +73,16 @@ public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileIn
             // fileSource.delete();
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            info.setStatus(FileInfoExtractor.FileStatus.ERROR);
         } catch (SmbException e) {
             e.printStackTrace();
+            info.setStatus(FileInfoExtractor.FileStatus.ERROR);
         } catch (IOException e) {
             e.printStackTrace();
+            info.setStatus(FileInfoExtractor.FileStatus.ERROR);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            info.setStatus(FileInfoExtractor.FileStatus.ERROR);
         }
         return params[0];
     }
@@ -87,8 +90,5 @@ public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileIn
     @Override
     protected void onPostExecute(FileInfoExtractor uri) {
         // Update Ui here
-        //
-        //
-        uri.setStatus(FileInfoExtractor.FileStatus.COPIED);
     }
 }

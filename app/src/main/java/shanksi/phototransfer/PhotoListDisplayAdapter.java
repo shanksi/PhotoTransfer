@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,19 +30,35 @@ public class PhotoListDisplayAdapter extends ArrayAdapter<FileInfoExtractor> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
-
         FileInfoExtractor fileUri = values.get(position);
 
-        TextView textView = (TextView) rowView.findViewById(R.id.label);
-        textView.setText(fileUri.getDisplayText());
+        ViewHolder holder = null;
+        if (convertView == null) {
+            holder = new ViewHolder();
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.rowlayout, parent, false);
 
-        ProgressBar spinner = (ProgressBar) rowView.findViewById(R.id.progressSpinner);
-        spinner.setVisibility(fileUri.getStatus() == FileInfoExtractor.FileStatus.COPYING || fileUri.getStatus() == FileInfoExtractor.FileStatus.COPIED ? View.VISIBLE : View.INVISIBLE);
+            holder.textView = (TextView) convertView.findViewById(R.id.label);
+            holder.spinner = (ProgressBar) convertView.findViewById(R.id.progressSpinner);
+            holder.tick = (ImageView) convertView.findViewById(R.id.tick);
+
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.textView.setText(fileUri.getDisplayText());
+        holder.spinner.setVisibility(fileUri.getStatus() == FileInfoExtractor.FileStatus.COPYING || fileUri.getStatus() == FileInfoExtractor.FileStatus.COPIED ? View.VISIBLE : View.INVISIBLE);
         if (fileUri.getStatus() == FileInfoExtractor.FileStatus.COPIED)
-            spinner.setProgress(spinner.getMax());
-        return rowView;
+            holder.spinner.setProgress(holder.spinner.getMax());
+        holder.tick.setVisibility(fileUri.getStatus() == FileInfoExtractor.FileStatus.COPIED ? View.VISIBLE : View.INVISIBLE);
+
+        return convertView;
+    }
+
+    static class ViewHolder {
+        TextView textView;
+        ProgressBar spinner;
+        ImageView tick;
     }
 }
