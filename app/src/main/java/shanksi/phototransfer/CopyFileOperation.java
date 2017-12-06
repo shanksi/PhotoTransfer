@@ -1,9 +1,6 @@
 package shanksi.phototransfer;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
@@ -38,7 +35,7 @@ public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileIn
         FileInfoExtractor info = params[0];
 
         try {
-            jcifs.Config.registerSmbURLHandler();
+            // jcifs.Config.registerSmbURLHandler();
 
             String newPath = new SimpleDateFormat(mPathFormat, Locale.ENGLISH).format(info.getDate());
 
@@ -90,5 +87,6 @@ public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileIn
     @Override
     protected void onPostExecute(FileInfoExtractor uri) {
         // Update Ui here
+        uri.informListeners();
     }
 }

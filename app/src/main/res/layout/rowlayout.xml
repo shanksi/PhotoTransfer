@@ -5,14 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
-    <ProgressBar
-        android:id="@+id/progressSpinner"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:visibility="invisible" />
-
     <TextView
         android:id="@+id/label"
         android:layout_width="wrap_content"
@@ -23,11 +15,10 @@
 
     <ImageView
         android:id="@+id/tick"
-        android:layout_width="50px"
-        android:layout_height="50px"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
         android:layout_weight="1"
-        android:scaleType="fitXY"
-        android:visibility="invisible"
-        app:srcCompat="@drawable/check_mark_1292787_960_720" />
+        android:contentDescription="@string/transfer_complete"
+        android:scaleType="center" />
 
 </LinearLayout>

@@ -18,7 +18,7 @@ public class FileInfoExtractor {
         SELECTED,
         COPYING,
         COPIED,
-        ERROR;
+        ERROR
     }
 
     private FileStatus _status;
@@ -100,13 +100,15 @@ public class FileInfoExtractor {
 
     public void setStatus(FileStatus value) {
         _status = value;
+    }
+
+    public void informListeners() {
         if (mListener != null)
             mListener.onStatusChanged(this);
-
     }
 
     public interface FileStatusListener {
         // add whatever methods you need here
-        public void onStatusChanged(FileInfoExtractor fileInfoExtractor);
+        void onStatusChanged(FileInfoExtractor fileInfoExtractor);
     }
 }

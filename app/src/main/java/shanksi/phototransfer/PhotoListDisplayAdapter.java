@@ -39,7 +39,6 @@ public class PhotoListDisplayAdapter extends ArrayAdapter<FileInfoExtractor> {
             convertView = inflater.inflate(R.layout.rowlayout, parent, false);
 
             holder.textView = (TextView) convertView.findViewById(R.id.label);
-            holder.spinner = (ProgressBar) convertView.findViewById(R.id.progressSpinner);
             holder.tick = (ImageView) convertView.findViewById(R.id.tick);
 
             convertView.setTag(holder);
@@ -48,17 +47,28 @@ public class PhotoListDisplayAdapter extends ArrayAdapter<FileInfoExtractor> {
         }
 
         holder.textView.setText(fileUri.getDisplayText());
-        holder.spinner.setVisibility(fileUri.getStatus() == FileInfoExtractor.FileStatus.COPYING || fileUri.getStatus() == FileInfoExtractor.FileStatus.COPIED ? View.VISIBLE : View.INVISIBLE);
-        if (fileUri.getStatus() == FileInfoExtractor.FileStatus.COPIED)
-            holder.spinner.setProgress(holder.spinner.getMax());
-        holder.tick.setVisibility(fileUri.getStatus() == FileInfoExtractor.FileStatus.COPIED ? View.VISIBLE : View.INVISIBLE);
 
+        switch(fileUri.getStatus()) {
+            case COPYING:
+                holder.tick.setImageResource(R.drawable.ic_file_upload_black_24dp);
+                holder.tick.setColorFilter(getContext().getResources().getColor(R.color.colorPrimaryDark));
+            case COPIED:
+                holder.tick.setImageResource(R.drawable.ic_done_black_24dp);
+                holder.tick.setColorFilter(getContext().getResources().getColor(R.color.colorSuccess));
+            case ERROR:
+                holder.tick.setImageResource(R.drawable.ic_error_outline_black_24dp);
+                holder.tick.setColorFilter(getContext().getResources().getColor(R.color.colorFail));
+        }
+        //if (fileUri.getStatus() == FileInfoExtractor.FileStatus.COPIED)
+        //    holder.spinner.setProgress(holder.spinner.getMax());
+        //holder.tick.setVisibility(View.VISIBLE ); // fileUri.getStatus() == FileInfoExtractor.FileStatus.COPIED ? View.VISIBLE : View.INVISIBLE);
+        //holder.tick.setImageResource(R.drawable.ic_done_black_24dp);
+        //holder.tick.setColorFilter(getContext().getResources().getColor(R.color.colorPrimary));
         return convertView;
     }
 
     static class ViewHolder {
         TextView textView;
-        ProgressBar spinner;
         ImageView tick;
     }
 }

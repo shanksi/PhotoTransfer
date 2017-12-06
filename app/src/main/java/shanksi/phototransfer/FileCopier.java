@@ -2,7 +2,6 @@ package shanksi.phototransfer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ public class FileCopier {
                 try {
                     FileInfoExtractor fileUri = uriArrayList.get(i);
                     fileUri.setStatus(FileInfoExtractor.FileStatus.COPYING);
+                    fileUri.informListeners();
                     new CopyFileOperation(auth, pathRoot, pathFormat, directoryTitle).execute(fileUri);
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
