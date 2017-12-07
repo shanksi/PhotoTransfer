@@ -21,29 +21,31 @@ public class FileInfoExtractor {
         ERROR
     }
 
-    private FileStatus _status;
     private final Uri _uri;
     private final String _path;
+    private FileStatus _status;
     private File _file;
     private Date _date;
+    private String _message;
     private static final String[] _filePathColumn = {MediaStore.MediaColumns.DATA};
 
     // add a private listener variable
-    private FileStatusListener mListener = null;
+    private FileStatusListener _listener = null;
 
     // provide a way for another class to set the listener
     public void setMyClassListener(FileStatusListener listener) {
-        this.mListener = listener;
+        this._listener = listener;
     }
 
     public FileInfoExtractor(Uri fileUri, FileStatusListener listener, Context context) {
         _uri = fileUri;
         _path = fileUri.getPath();
+        _message = "ok";
+
         extractFileInfo(fileUri, context);
 
         _status = FileStatus.SELECTED;
-
-        mListener = listener;
+        _listener = listener;
     }
 
     private void extractFileInfo(Uri fileUri, Context context) {
@@ -63,10 +65,9 @@ public class FileInfoExtractor {
             try {
                 _date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH).parse(dtString);
             } catch (ParseException e) {
+                _message = e.getMessage();
                 e.printStackTrace();
             }
-        } else {
-            dtString = "";
         }
         cursor.close();
     }
@@ -91,7 +92,7 @@ public class FileInfoExtractor {
     }
 
     public Date getDate() {
-        return _date;
+        return _date != null ? _date : new Date();
     }
 
     public FileStatus getStatus() {
@@ -102,9 +103,17 @@ public class FileInfoExtractor {
         _status = value;
     }
 
+    public String getMessage() {
+        return _message;
+    }
+
+    public void setMessage(String value) {
+        _message = value;
+    }
+
     public void informListeners() {
-        if (mListener != null)
-            mListener.onStatusChanged(this);
+        if (_listener != null)
+            _listener.onStatusChanged(this);
     }
 
     public interface FileStatusListener {

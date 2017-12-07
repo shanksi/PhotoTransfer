@@ -18,4 +18,6 @@
     <string name="enter_name_optional">Enter Name (optional)</string>
 
     <string name="transfer_complete">Transfer Complete</string>
+    <string name="default_label">fileName</string>
+    <string name="default_status">status</string>
 </resources>

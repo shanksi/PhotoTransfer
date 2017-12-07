@@ -33,6 +33,7 @@ public class FileCopier {
                 try {
                     FileInfoExtractor fileUri = uriArrayList.get(i);
                     fileUri.setStatus(FileInfoExtractor.FileStatus.COPYING);
+                    fileUri.setMessage("copying");
                     fileUri.informListeners();
                     new CopyFileOperation(auth, pathRoot, pathFormat, directoryTitle).execute(fileUri);
                 } catch (Exception e) {

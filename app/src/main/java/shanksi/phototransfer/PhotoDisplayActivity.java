@@ -90,7 +90,7 @@ public class PhotoDisplayActivity
                 EditText t = (EditText) findViewById(R.id.editText);
 
                 InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                mgr.hideSoftInputFromWindow(t.getWindowToken(), 0);
+                if (mgr != null) mgr.hideSoftInputFromWindow(t.getWindowToken(), 0);
 
                 new FileCopier(getBaseContext()).CopyFiles(imageUris, t.getText().toString().trim());
             }

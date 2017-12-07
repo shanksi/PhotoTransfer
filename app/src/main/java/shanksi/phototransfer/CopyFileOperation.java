@@ -5,8 +5,10 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -61,25 +63,18 @@ public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileIn
             try (FileInputStream fis = new FileInputStream(fileSource); SmbFileOutputStream smbfos = new SmbFileOutputStream(smbFileTarget)) {
                 // 16 kb
                 final byte[] b = new byte[16 * 1024];
-                int read = 0;
+                int read;
                 while ((read = fis.read(b, 0, b.length)) > 0) {
                     smbfos.write(b, 0, read);
                 }
             }
             smbFileTarget.setLastModified(info.getDate().getTime());
+            info.setStatus(FileInfoExtractor.FileStatus.COPIED);
             // fileSource.delete();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            info.setStatus(FileInfoExtractor.FileStatus.ERROR);
-        } catch (SmbException e) {
-            e.printStackTrace();
-            info.setStatus(FileInfoExtractor.FileStatus.ERROR);
         } catch (IOException e) {
             e.printStackTrace();
             info.setStatus(FileInfoExtractor.FileStatus.ERROR);
-        } catch (Exception e) {
-            e.printStackTrace();
-            info.setStatus(FileInfoExtractor.FileStatus.ERROR);
+            info.setMessage(e.getMessage());
         }
         return params[0];
     }
