@@ -5,15 +5,11 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import jcifs.smb.NtlmPasswordAuthentication;
-import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileOutputStream;
 
@@ -37,8 +33,6 @@ public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileIn
         FileInfoExtractor info = params[0];
 
         try {
-            // jcifs.Config.registerSmbURLHandler();
-
             String newPath = new SimpleDateFormat(mPathFormat, Locale.ENGLISH).format(info.getDate());
 
             String fullPath = "smb:" + mPathRoot + "/" + newPath;
@@ -70,6 +64,7 @@ public class CopyFileOperation extends AsyncTask<FileInfoExtractor, Void, FileIn
             }
             smbFileTarget.setLastModified(info.getDate().getTime());
             info.setStatus(FileInfoExtractor.FileStatus.COPIED);
+            info.setMessage(filePath);
             // fileSource.delete();
         } catch (IOException e) {
             e.printStackTrace();

@@ -2,7 +2,7 @@ package shanksi.phototransfer;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 
